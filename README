@@ -1,0 +1,27 @@
+wccollog
+
+print colored weechat logfiles.
+
+
+Usage:
+    wccollog [-weechat-home-dir <dir>] [-mynick <nick>] -logfile <file> 
+
+    pipe to less:
+
+    wccollog [-weechat-home-dir <dir>] [-mynick <nick>] -logfile <file> |less -R
+
+    or e.g. with grep (for a date):
+
+    grep "^2010-01" logfile | wccollog -l - |less -R
+
+   -l, -logfile:          weechat logfile or '-' for stdin
+
+   -w, -weechat-home-dir: directory to look for weechat.conf needed for colors
+                          default is ~/.weechat
+
+   -m, -mynick :          will color your nick with color of 'chat_nick_self'
+                          and will show highlights
+
+ Support for logfiles with lines like: yyyy-mm-dd hh:mm:ss   nick/action   message
+ Lines with actions like '--' | '<--' | '--> are filtered'
+
