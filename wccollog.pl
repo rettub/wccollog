@@ -16,6 +16,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 # -----------------------------------------------------------------------------
+# newest version available at:
+#
+# http://github.com/rettub/wccollog/raw/master/wccollog.pl
+# -----------------------------------------------------------------------------
 # wccollog
 #
 # print colored weechat logfiles.
