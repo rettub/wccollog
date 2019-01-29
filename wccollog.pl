@@ -81,7 +81,7 @@ sub check_config {
         $i++;
         last if $i == 3;
         next if $i == 1;
-        $is_conf = 2 if (/# weechat\.conf -- /);
+        $is_conf = 2 if (/ weechat\.conf$/);
     }
 
     close CONFIG;
@@ -117,17 +117,19 @@ sub read_weechat_config {
 
 my ($dt, $dd);
 sub process_config {
-    $color_nicks_number = $Config{'color_nicks_number'};
+    $Config{'chat_nick_colors'} =~ s/"//g;
+    my @chat_nick_colors = split(',', $Config{'chat_nick_colors'});
+    $color_nicks_number = $#chat_nick_colors;
 
-    for ( my $i = 1 ; $i <= $Config{color_nicks_number} ; $i++ ) {
-        $nc[$i] = convert_colors( $Config{ 'chat_nick_color' . sprintf( "%02d", $i ) } );
+    for ( my $i = 0 ; $i <= $color_nicks_number ; $i++ ) {
+        $nc[$i] = convert_colors( $chat_nick_colors[$i] ) ;
     }
-    $nicklist_prefix1 = sprintf( "%s", colored [ convert_colors( $Config{'nicklist_prefix1'} ) ], "@", );
-    $nicklist_prefix3 = sprintf( "%s", colored [ convert_colors( $Config{'nicklist_prefix3'} ) ], "+", );
+    $nicklist_prefix1 = sprintf( "%s", colored [ convert_colors( $Config{'nicklist_prefix1'} || 'light green' ) ], "@", );
+    $nicklist_prefix3 = sprintf( "%s", colored [ convert_colors( $Config{'nicklist_prefix3'} || 'yellow' ) ], "+", );
     $dd = sprintf( "%s", colored ['yellow'], '-', colored ['reset'] );
     $dt = sprintf( "%s", colored ['yellow'], ':', colored ['reset'] );
     $nick_action = sprintf( "%s", colored ['white'], "*", colored ['reset'] );
-    $color_chat_nick_self = sprintf( "%s", colored [ convert_colors( $Config{'chat_nick_self'} ) ]);
+    $color_chat_nick_self = sprintf( "%s", colored [ convert_colors( 'white' || $Config{'chat_nick_self'} ) ]);
 }
 
 sub convert_colors {
@@ -146,16 +148,14 @@ sub convert_colors {
 }
 
 sub irc_nick_find_color {
-
     #nick_name := $_[0];
-
     my $color = 0;
     foreach my $c ( split( //, $_[0] ) ) {
         $color += ord($c);
     }
-    $color = ( $color % $color_nicks_number );
-
-    return $nc[ $color + 1 ];
+    $color %= $color_nicks_number;
+    my $retval = $nc[ $color ];
+    return $retval =~ /^\d+$/ ? 'ansi' . $retval : $retval;
 }
 
 sub color_nick {
